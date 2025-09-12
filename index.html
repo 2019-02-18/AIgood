@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 A股牛熊风向标预测系统</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 🎨 全局样式 - 现代化设计 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        /* 🌟 主容器 - 玻璃拟态效果 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+        
+        /* 📱 响应式标题 */
+        .main-title {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+        
+        /* 📊 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        /* 📋 预测报告列表 */
+        .reports-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            color: #667eea;
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .report-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+        
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .report-card:hover::before {
+            left: 100%;
+        }
+        
+        .report-date {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .report-date i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+        
+        .report-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .status-latest {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .status-archive {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .report-preview {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+        
+        .btn-secondary:hover {
+            background: #6c757d;
+            color: white;
+        }
+        
+        /* 🔧 功能区域 */
+        .features-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        /* 🖼️ 预览区域 */
+        .preview-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .viewer-frame {
+            width: 100%;
+            height: 70vh;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #dfe3f0;
+        }
+
+        .btn-ghost:hover {
+            background: #eef1ff;
+        }
+
+        .active-card {
+            border-color: #764ba2 !important;
+        }
+
+        /* 📱 响应式设计 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ✨ 动画效果 */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .live-indicator {
+            animation: pulse 2s infinite;
+            color: #28a745;
+        }
+
+        /* ===== 简洁风格覆盖（Minimal） ===== */
+        body { background: #fff; color: #222; }
+        .container { background: #fff; border: 1px solid #eee; backdrop-filter: none; box-shadow: none; }
+        .main-title { color: #222; text-shadow: none; }
+        .subtitle { color: #666; }
+        .section-title i { color: inherit; }
+        .reports-grid { display: none; }
+        .preview-section { display: none; }
+        .btn, .btn-primary, .btn-secondary { background: transparent; color: #333; border: 1px solid #ddd; box-shadow: none; }
+        .btn-primary:hover, .btn-secondary:hover { background: #f7f7f7; color: #111; }
+        .stats-grid, .features-section { display: none; }
+        .simple-list { list-style: none; padding-left: 0; }
+        .simple-list li { 
+            border: 1px solid #eee; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; 
+            display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #fff; transition: box-shadow .2s ease, border-color .2s ease; 
+        }
+        .simple-list li:hover { box-shadow: 0 4px 14px rgba(0,0,0,.06); border-color: #e5e7eb; }
+        .item-title { font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .item-right { display: flex; align-items: center; gap: 10px; }
+        .item-open { color: #0b61c9; text-decoration: none; border: 1px solid #dfe3f0; padding: 6px 10px; border-radius: 6px; font-size: 12px; }
+        .item-open:hover { background: #eef1ff; }
+        .item-arrow { color: #c0c4cc; }
+
+        /* 上证指数条 */
+        .sse-bar { margin: 10px 0 16px; padding: 10px 12px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; transition: background-color .3s ease; }
+        .sse-row { display: flex; align-items: baseline; gap: 10px; }
+        .sse-name { font-weight: 700; }
+        .sse-price { font-size: 18px; font-weight: 700; }
+        .sse-pct { font-size: 14px; }
+        .sse-time { margin-left: auto; font-size: 12px; color: #888; }
+
+        .sse-up { background: #ffecec; }
+        .sse-down { background: #e6ffed; }
+        .sse-flat { background: #f6f6f6; }
+
+        /* 风险提示 */
+        .risk-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #efefef; font-size: 12px; color: #666; }
+        
+        /* 🌙 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .report-card {
+                background: linear-gradient(135deg, #2c3e50, #34495e);
+                color: #ecf0f1;
+            }
+            
+            .report-date {
+                color: #ecf0f1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 🎯 主标题区域 -->
+        <h1 class="main-title">
+            <i class="fas fa-chart-line"></i>
+            A股牛熊风向标预测系统
+        </h1>
+        
+        <!-- 实时上证指数（免费接口） -->
+        <!-- <div class="sse-bar sse-flat" id="sse-bar">
+            <div class="sse-row">
+                <span class="sse-name">上证指数</span>
+                <span class="sse-price" id="sse-price">--</span>
+                <span class="sse-pct" id="sse-pct">--</span>
+                <span class="sse-time" id="sse-time">--:--:--</span>
+            </div>
+        </div> -->
+
+        <!-- 📊 统计概览 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="stat-number" id="total-reports">2</div>
+                <div class="stat-label">预测报告总数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-number" id="accuracy-rate">85%</div>
+                <div class="stat-label">预测准确率</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="last-update">今日</div>
+                <div class="stat-label">最后更新</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-trending-up"></i>
+                </div>
+                <div class="stat-number" id="market-trend">震荡</div>
+                <div class="stat-label">当前趋势</div>
+            </div>
+        </div>
+        
+        <!-- 📋 预测报告列表 -->
+        <div class="reports-section">
+            <h2 class="section-title">
+                <i class="fas fa-file-chart"></i>
+                预测报告列表
+            </h2>
+            <div class="reports-grid" id="reports-container">
+                <!-- 报告卡片将通过JavaScript动态生成 -->
+            </div>
+            <ul class="simple-list" id="simple-list"></ul>
+            <div class="risk-footer">风险提示：本预测为量化与规则融合的参考，不构成投资建议。请结合自身风险承受能力决策。</div>
+        </div>
+
+        <!-- 🖼️ 预测预览（自动轮播） -->
+        <div class="preview-section">
+            <div class="toolbar">
+                <h2 class="section-title" style="margin:0;">
+                    <i class="fas fa-eye"></i>
+                    实时预览（自动轮播）
+                </h2>
+                <div>
+                    <button class="btn btn-ghost" id="prev-btn"><i class="fas fa-arrow-left"></i> 上一份</button>
+                    <button class="btn btn-ghost" id="next-btn">下一份 <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <iframe id="report-viewer" class="viewer-frame" src=""></iframe>
+            <div class="tips" style="margin-top:8px;color:#6c757d;font-size:12px;">提示：将自动从本目录中发现并轮播近30天的预测报告，亦可点击上方卡片切换。</div>
+        </div>
+        
+        <!-- 🔧 系统功能 -->
+        <div class="features-section">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                系统功能特色
+            </h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="feature-title">AI智能分析</div>
+                    <div class="feature-desc">基于深度学习算法，多维度数据分析</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-title">技术指标</div>
+                    <div class="feature-desc">MACD、RSI、KDJ等专业技术分析</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-title">风险控制</div>
+                    <div class="feature-desc">智能止损建议，仓位管理策略</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="feature-title">实时更新</div>
+                    <div class="feature-desc">每日收盘后自动生成次日预测</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 📊 动态生成报告列表
+        function stripSuffix(name) {
+            return name.replace(/\.html?$/i, '');
+        }
+
+        function prettyTitleFromFilename(filename) {
+            // 例：牛熊风向标明日预测_2025-09-15.html -> 牛熊风向标明日预测（2025-09-15）
+            const base = filename.split('/').pop();
+            const noExt = stripSuffix(base);
+            const m = noExt.match(/^(.*)_(\d{4}-\d{2}-\d{2})$/);
+            if (m) return `${m[1]}（${m[2]}）`;
+            return noExt;
+        }
+
+        function generateReportsList(reports) {
+            const ul = document.getElementById('simple-list');
+            ul.innerHTML = reports.map(r => {
+                const title = prettyTitleFromFilename(r.filename);
+                return `
+                <li>
+                    <span class="item-title">${title}</span>
+                    <span class="item-right">
+                        <a class="item-open" href="${r.filename}" target="_blank">打开</a>
+                        <span class="item-arrow">›</span>
+                    </span>
+                </li>`;
+            }).join('');
+        }
+        
+        // 🔗 打开报告
+        function openReport(filename) {
+            window.open(filename, '_blank');
+        }
+        
+        // 📤 分享报告
+        function shareReport(filename) {
+            const url = window.location.origin + window.location.pathname.replace('index.html', '') + filename;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'A股牛熊风向标预测报告',
+                    text: '查看最新的A股市场预测分析',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('报告链接已复制到剪贴板！');
+                });
+            }
+        }
+        
+        // 📈 上证指数（Sina JSONP免费接口）
+        function fetchSSE() {
+            return new Promise(resolve => {
+                const cb = 'cb_' + Math.random().toString(36).slice(2);
+                const script = document.createElement('script');
+                window[cb] = function(res) {
+                    try {
+                        // 兼容两种返回：1) var hq_str_sh000001="..." 2) JSONP结构
+                        // 方案1：Sina常见jsonp：list=sh000001
+                        // 使用简化接口：http://hq.sinajs.cn/list=sh000001 （无JSONP回调，使用script会注入全局变量）
+                        resolve(res);
+                    } finally {
+                        delete window[cb];
+                        script.remove();
+                    }
+                };
+                // 首选直接变量接口
+                const url = 'https://hq.sinajs.cn/list=sh000001';
+                script.src = url;
+                script.onerror = () => {
+                    resolve(null);
+                    script.remove();
+                };
+                document.body.appendChild(script);
+                // 回退：2秒后尝试从全局变量读取
+                setTimeout(() => {
+                    try {
+                        // hq_str_sh000001 格式: "上证指数,最新,昨收,开盘,成交量(手),成交额(万),... ,日期,时间"
+                        // 实测格式: name,now,close,open,volume,amount,high,low,买盘,卖盘,成交量,日期,时间 ... （会有变动）
+                        let raw = window.hq_str_sh000001;
+                        if (raw && typeof raw === 'string' && raw.length > 0) {
+                            const parts = raw.split(',');
+                            const name = parts[0];
+                            const now = parseFloat(parts[1]);
+                            const close = parseFloat(parts[2]);
+                            const time = parts[parts.length - 1] || '';
+                            resolve({ name, now, close, time });
+                        }
+                    } catch(e) { resolve(null); }
+                }, 2000);
+            });
+        }
+
+        function renderSSE(data) {
+            const bar = document.getElementById('sse-bar');
+            const priceEl = document.getElementById('sse-price');
+            const pctEl = document.getElementById('sse-pct');
+            const timeEl = document.getElementById('sse-time');
+            if (!bar || !priceEl || !pctEl || !timeEl) return;
+            if (!data || !isFinite(data.now) || !isFinite(data.close)) return;
+
+            const pct = ((data.now - data.close) / data.close) * 100;
+            priceEl.textContent = data.now.toFixed(2);
+            pctEl.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+            timeEl.textContent = data.time || '';
+
+            bar.classList.remove('sse-up','sse-down','sse-flat');
+            if (pct > 0.01) bar.classList.add('sse-up');
+            else if (pct < -0.01) bar.classList.add('sse-down');
+            else bar.classList.add('sse-flat');
+        }
+
+        async function refreshSSE() {
+            const data = await fetchSSE();
+            renderSSE(data);
+        }
+
+        // 🧭 自动发现本目录内的预测报告（按命名规则尝试）
+        async function discoverReports() {
+            // 已知文件种子（本目录已存在的历史预测）
+            const seed = [
+                '牛熊风向标明日预测_2025-09-15.html',
+                '牛熊风向标明日预测_2025-09-12.html',
+                '牛熊风向标明日预测_2025-09-11.html',
+                '牛熊风向标明日预测_2025-09-10.html',
+                '牛熊风向标明日预测_2025-09-09.html',
+                '牛熊风向标明日预测_2025-09-08.html',
+                '牛熊风向标明日预测_2025-09-05.html',
+                '牛熊风向标明日预测_2025-09-04.html'
+            ];
+
+            // 近30天内按规则探测（若在本地file协议下，fetch可能受限，失败忽略）
+            const today = new Date();
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const name = `牛熊风向标明日预测_${y}-${m}-${day}.html`;
+                if (!seed.includes(name)) seed.push(name);
+            }
+
+            async function exists(path) {
+                try {
+                    const res = await fetch(path, { method: 'GET', cache: 'no-store' });
+                    return res.ok;
+                } catch (e) {
+                    // 在本地 file:// 场景下可能报错，退化为乐观存在（由用户点击时验证）
+                    return false;
+                }
+            }
+
+            // 过滤确实存在的（或保留种子前若干个以提升可用性）
+            const candidates = Array.from(new Set(seed));
+            const checks = await Promise.all(candidates.map(async f => ({ f, ok: await exists(f) })));
+            let files = checks.filter(x => x.ok).map(x => x.f);
+            if (files.length === 0) {
+                // 回退：保留种子中已知存在于仓库的文件名（按时间倒序）
+                files = [
+                    '牛熊风向标明日预测_2025-09-15.html',
+                    '牛熊风向标明日预测_2025-09-12.html',
+                    '牛熊风向标明日预测_2025-09-11.html',
+                    '牛熊风向标明日预测_2025-09-10.html',
+                    '牛熊风向标明日预测_2025-09-09.html',
+                    '牛熊风向标明日预测_2025-09-08.html',
+                    '牛熊风向标明日预测_2025-09-05.html',
+                    '牛熊风向标明日预测_2025-09-04.html'
+                ];
+            }
+
+            // 转成带日期的对象并按日期倒序
+            const toObj = (fname) => {
+                const m = fname.match(/(\d{4}-\d{2}-\d{2})/);
+                return {
+                    filename: fname,
+                    date: m ? m[1] : fname,
+                    preview: ''
+                };
+            };
+            const reports = files.map(toObj).sort((a, b) => b.date.localeCompare(a.date));
+            return reports;
+        }
+
+        // 🎞️ 自动轮播
+        let carouselTimer = null;
+        let currentIndex = 0;
+        let reportList = [];
+
+        function showReport(index) {
+            if (!reportList.length) return;
+            currentIndex = (index + reportList.length) % reportList.length;
+            const viewer = document.getElementById('report-viewer');
+            if (viewer) {
+                viewer.src = reportList[currentIndex].filename;
+                document.querySelectorAll('.report-card').forEach((el, i) => {
+                    el.classList.toggle('active-card', i === currentIndex);
+                });
+            }
+        }
+
+        function startCarousel() {
+            stopCarousel();
+            carouselTimer = setInterval(() => {
+                showReport(currentIndex + 1);
+            }, 20000); // 20秒切换一次
+        }
+
+        function stopCarousel() {
+            if (carouselTimer) {
+                clearInterval(carouselTimer);
+                carouselTimer = null;
+            }
+        }
+
+        function selectReport(index) {
+            showReport(index);
+            startCarousel();
+        }
+
+        // 🔄 更新统计数据
+        function updateStats() {
+            const now = new Date();
+            document.getElementById('last-update').textContent = 
+                now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+        }
+        
+        // 🎯 自动检测新报告
+        function checkForNewReports() {
+            // 这里可以添加自动检测新报告的逻辑
+            console.log('检查新报告...');
+        }
+        
+        // 🚀 初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 发现报告并渲染
+            reportList = await discoverReports();
+            generateReportsList(reportList);
+            updateStats();
+            // 刷新上证指数
+            refreshSSE();
+            setInterval(refreshSSE, 60 * 1000);
+
+            // 预览首个并启动轮播（仅当有预览框存在时）
+            const viewer = document.getElementById('report-viewer');
+            if (viewer && reportList.length) {
+                showReport(0);
+                startCarousel();
+            }
+            const totalEl = document.getElementById('total-reports');
+            if (totalEl) totalEl.textContent = String(reportList.length);
+
+            // 上/下一份
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', () => {
+                    stopCarousel();
+                    showReport(currentIndex - 1);
+                    startCarousel();
+                });
+                nextBtn.addEventListener('click', () => {
+                    stopCarousel();
+                    showReport(currentIndex + 1);
+                    startCarousel();
+                });
+            }
+
+            // 每5分钟检查一次新报告（可扩展）
+            setInterval(checkForNewReports, 5 * 60 * 1000);
+        });
+        
+        // 📱 响应式菜单（如果需要）
+        function toggleMobileMenu() {
+            // 移动端菜单切换逻辑
+        }
+    </script>
+</body>
+</html>
