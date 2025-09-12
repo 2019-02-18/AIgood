@@ -633,27 +633,24 @@
 
         // 🧭 自动发现本目录内的预测报告（按命名规则尝试）
         async function discoverReports() {
-            // 已知文件种子（本目录已存在的历史预测）
-            const seed = [
-                '牛熊风向标明日预测_2025-09-15.html',
-                '牛熊风向标明日预测_2025-09-12.html',
-                '牛熊风向标明日预测_2025-09-11.html',
-                '牛熊风向标明日预测_2025-09-10.html',
-                '牛熊风向标明日预测_2025-09-09.html',
-                '牛熊风向标明日预测_2025-09-08.html',
-                '牛熊风向标明日预测_2025-09-05.html',
-                '牛熊风向标明日预测_2025-09-04.html'
-            ];
-
-            // 近30天内按规则探测（若在本地file协议下，fetch可能受限，失败忽略）
+            // 仅按近30天命名规则探测，探测不到则返回空列表（不使用默认列表）
             const today = new Date();
-            for (let i = 0; i < 30; i++) {
-                const d = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+            const ONE_DAY = 24 * 60 * 60 * 1000;
+            const candidates = [];
+            // 向后回溯60天，向前预判7天（覆盖跨周/节假日生成的T+1文件）
+            for (let i = 0; i <= 60; i++) {
+                const d = new Date(today.getTime() - i * ONE_DAY);
                 const y = d.getFullYear();
                 const m = String(d.getMonth() + 1).padStart(2, '0');
                 const day = String(d.getDate()).padStart(2, '0');
-                const name = `牛熊风向标明日预测_${y}-${m}-${day}.html`;
-                if (!seed.includes(name)) seed.push(name);
+                candidates.push(`牛熊风向标明日预测_${y}-${m}-${day}.html`);
+            }
+            for (let i = 1; i <= 7; i++) {
+                const d = new Date(today.getTime() + i * ONE_DAY);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                candidates.push(`牛熊风向标明日预测_${y}-${m}-${day}.html`);
             }
 
             async function exists(path) {
@@ -661,40 +658,18 @@
                     const res = await fetch(path, { method: 'GET', cache: 'no-store' });
                     return res.ok;
                 } catch (e) {
-                    // 在本地 file:// 场景下可能报错，退化为乐观存在（由用户点击时验证）
                     return false;
                 }
             }
 
-            // 过滤确实存在的（或保留种子前若干个以提升可用性）
-            const candidates = Array.from(new Set(seed));
             const checks = await Promise.all(candidates.map(async f => ({ f, ok: await exists(f) })));
-            let files = checks.filter(x => x.ok).map(x => x.f);
-            if (files.length === 0) {
-                // 回退：保留种子中已知存在于仓库的文件名（按时间倒序）
-                files = [
-                    '牛熊风向标明日预测_2025-09-15.html',
-                    '牛熊风向标明日预测_2025-09-12.html',
-                    '牛熊风向标明日预测_2025-09-11.html',
-                    '牛熊风向标明日预测_2025-09-10.html',
-                    '牛熊风向标明日预测_2025-09-09.html',
-                    '牛熊风向标明日预测_2025-09-08.html',
-                    '牛熊风向标明日预测_2025-09-05.html',
-                    '牛熊风向标明日预测_2025-09-04.html'
-                ];
-            }
+            const files = checks.filter(x => x.ok).map(x => x.f);
 
-            // 转成带日期的对象并按日期倒序
             const toObj = (fname) => {
                 const m = fname.match(/(\d{4}-\d{2}-\d{2})/);
-                return {
-                    filename: fname,
-                    date: m ? m[1] : fname,
-                    preview: ''
-                };
+                return { filename: fname, date: m ? m[1] : fname, preview: '' };
             };
-            const reports = files.map(toObj).sort((a, b) => b.date.localeCompare(a.date));
-            return reports;
+            return files.map(toObj).sort((a, b) => b.date.localeCompare(a.date));
         }
 
         // 🎞️ 自动轮播

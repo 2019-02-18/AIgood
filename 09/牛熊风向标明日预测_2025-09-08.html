@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 A股明日预测系统 - 2025年9月8日</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 🎨 全局样式 - 现代化设计 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* 🌟 主容器 - 玻璃拟态效果 */
+        .prediction-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 📱 响应式标题 */
+        .main-title {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        /* 🎲 概率分析区域 - 重点展示 */
+        .probability-analysis {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .probability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .probability-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .probability-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .probability-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .probability-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        .probability-desc {
+            font-size: 0.9rem;
+            color: #666;
+            opacity: 0.8;
+        }
+        
+        /* 📈 数据卡片网格 */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .data-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+            margin-right: 12px;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .metric-change {
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        
+        .positive { background: #d4edda; color: #155724; }
+        .negative { background: #f8d7da; color: #721c24; }
+        .neutral { background: #e2e3e5; color: #383d41; }
+        
+        /* 📊 概率可视化 */
+        .scenario-overview {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .probability-chart {
+            display: flex;
+            height: 60px;
+            border-radius: 30px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .prob-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .prob-segment:hover {
+            filter: brightness(1.1);
+            transform: scaleY(1.1);
+        }
+        
+        .prob-震荡 { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+        .prob-下跌 { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .prob-反弹 { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .prob-低走 { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .prob-大涨 { background: linear-gradient(135deg, #3498db, #2980b9); }
+        
+        /* 🎯 操作建议面板 */
+        .operation-panel {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+        
+        .operation-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .operation-title i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .operation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .operation-item {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .operation-condition {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e74c3c;
+        }
+        
+        .operation-action {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        
+        /* 📱 响应式设计 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .prediction-container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ✨ 动画效果 */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .live-indicator {
+            animation: pulse 2s infinite;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="prediction-container">
+        <!-- 🎯 主标题区域 -->
+        <h1 class="main-title">
+            <i class="fas fa-chart-line"></i>
+            A股明日预测系统
+        </h1>
+        <p class="subtitle">
+            <i class="fas fa-clock live-indicator"></i>
+            预测日期：2025年9月8日 | 盘前更新 | AI智能分析
+            <br>
+            <span id="update-time">生成时间：2025-09-08 09:15</span>
+        </p>
+        
+
+
+        <!-- 📊 技术分析要点 -->
+        <div class="data-card" style="margin-top: 20px;">
+            <div class="card-header">
+                <i class="fas fa-chart-area card-icon"></i>
+                <h3 class="card-title">技术分析要点</h3>
+            </div>
+            <div style="line-height: 1.6;">
+                <p><strong>📈 今日回顾：</strong>截至今日收盘，上证指数报3812.51点，上涨1.24%。两市成交额2.30万亿元，较昨日缩量0.24万亿，市场呈现高位震荡格局。上涨家数4857家，下跌家数473家，赚钱效应显著。</p>
+                <p><strong>🎯 关键位置：</strong>上证指数支撑位3350点，压力位3450点。目前指数在该区间运行，方向选择有待明确。</p>
+                <p><strong>💰 资金面：</strong>两融余额2.28万亿，融资净买入-97.03亿，显示杠杆资金趋于谨慎。龙虎榜数据显示，资金主要流入CPO、光模块等科技概念。</p>
+                <p><strong>📊 市场情绪：</strong>股吧情绪“偏多”，但融资盘的流出反映出市场存在分歧，整体情绪中性偏乐观。</p>
+                <p><strong>🔥 热点板块：</strong>科技股（CPO、AI手机、消费电子）、军工、券商等板块表现活跃，资金关注度高。</p>
+                <p><strong>⚠️ 风险提示：</strong>成交量未能有效放大是隐忧，若后续量能不济，市场可能面临调整压力。同时需警惕高位股的回调风险。</p>
+            </div>
+        </div>
+
+        <!-- 🎲 明日走势概率分析 -->
+        <div class="probability-analysis">
+            <h3><i class="fas fa-chart-pie"></i> 明日走势概率分析</h3>
+            <div class="probability-grid">
+                <div class="probability-item">
+                    <div class="probability-value">45%</div>
+                    <div class="probability-label">震荡整理</div>
+                    <div class="probability-desc">多空博弈激烈</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-value">25%</div>
+                    <div class="probability-label">向下突破</div>
+                    <div class="probability-desc">资金流出压力</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-value">20%</div>
+                    <div class="probability-label">反弹上攻</div>
+                    <div class="probability-desc">情绪面支撑</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-value">7%</div>
+                    <div class="probability-label">低开低走</div>
+                    <div class="probability-desc">悲观情绪释放</div>
+                </div>
+                <div class="probability-item">
+                    <div class="probability-value">3%</div>
+                    <div class="probability-label">大幅反弹</div>
+                    <div class="probability-desc">小概率事件</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 📈 数据展示网格 -->
+        <div class="data-grid">
+            <!-- 指数预测卡片 -->
+            <div class="data-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line card-icon"></i>
+                    <h3 class="card-title">指数预测</h3>
+                </div>
+                <div class="metric-value">震荡偏强 <span class="metric-change positive">上涨概率 75%</span></div>
+                <div>上证指数预测区间：3350 - 3450</div>
+                <div>深证成指预测：温和上涨</div>
+                <div>创业板指预测：高位震荡</div>
+                <div style="margin-top: 10px; color: #666;">关键支撑：3350点 | 关键压力：3450点</div>
+            </div>
+            
+            <!-- 资金流向卡片 -->
+            <div class="data-card">
+                <div class="card-header">
+                    <i class="fas fa-coins card-icon"></i>
+                    <h3 class="card-title">资金流向 (龙虎榜)</h3>
+                </div>
+                <div style="line-height: 1.6;">
+                    <ul style="padding-left: 20px; margin: 0;">
+                        <li><b>CPO概念:</b> 买入净额2.37亿元</li>
+                        <li><b>深股通专用:</b> 买入净额1.58亿元</li>
+                        <li><b>光模块:</b> 买入净额1.25亿元</li>
+                        <li><b>AI手机:</b> 买入净额1.11亿元</li>
+                        <li><b>消费电子:</b> 买入净额0.98亿元</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 板块机会卡片 -->
+            <div class="data-card">
+                <div class="card-header">
+                    <i class="fas fa-layer-group card-icon"></i>
+                    <h3 class="card-title">板块机会</h3>
+                </div>
+                <div style="line-height: 1.6;">
+                    <ul style="padding-left: 20px; margin: 0;">
+                        <li><b>北证50及军工板块:</b> 关注修复机会。</li>
+                        <li><b>券商板块:</b> 估值修复机会值得看好。</li>
+                        <li><b>科技板块:</b> 市场调整或带来逢低布局机会。</li>
+                        <li><b>计算机板块:</b> AI软件&硬件、信创等板块投资机会。</li>
+                        <li><b>通信板块:</b> 回调或提供布局机会。</li>
+                        <li><b>白酒板块:</b> 底部配置机会显现。</li>
+                        <li><b>化工板块:</b> 资金净流入居前，有望迎来布局机会。</li>
+                        <li><b>金银板块:</b> 美国降息概率较大，值得重视。</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 操作建议卡片 -->
+            <div class="data-card">
+                <div class="card-header">
+                    <i class="fas fa-lightbulb card-icon"></i>
+                    <h3 class="card-title">操作建议</h3>
+                </div>
+                <div style="line-height: 1.6;">
+                    <ul style="padding-left: 20px; margin: 0;">
+                        <li><strong>仓位建议:</strong> 维持中性仓位 (50%-60%)，市场结构性机会与风险并存。</li>
+                        <li><strong>板块关注:</strong> 重点关注科技股 (CPO, 光模块, AI手机) 和军工板块的修复机会。</li>
+                        <li><strong>操作策略:</strong> 短期内以高抛低吸为主，避免追高。回调时可分批布局有业绩支撑的优质标的。</li>
+                        <li><strong>风险提示:</strong> 注意市场成交量的变化，若持续缩量可能引发调整风险。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 📊 概率分布可视化 -->
+        <div class="scenario-overview">
+            <h3><i class="fas fa-chart-pie"></i> 明日走势概率分布</h3>
+            <div class="probability-chart">
+                <div class="prob-segment prob-震荡" style="width: 35%;">震荡 35%</div>
+                <div class="prob-segment prob-下跌" style="width: 30%;">下跌 30%</div>
+                <div class="prob-segment prob-反弹" style="width: 20%;">反弹 20%</div>
+                <div class="prob-segment prob-低走" style="width: 10%;">低走 10%</div>
+                <div class="prob-segment prob-大涨" style="width: 5%;">大涨 5%</div>
+            </div>
+            <div style="display: flex; justify-content: space-around; font-size: 0.9rem; color: #666; margin-top: 10px;">
+                <span>🔴 下跌概率 32%</span>
+                <span>🟡 震荡概率 45%</span>
+                <span>🟢 上涨概率 23%</span>
+            </div>
+        </div>
+        
+        <!-- 🎯 智能操作建议 -->
+        <div class="operation-panel">
+            <h3 class="operation-title">
+                <i class="fas fa-robot"></i>
+                AI智能操作建议
+            </h3>
+            <div class="operation-grid">
+                <div class="operation-item">
+                    <div class="operation-condition">✅ 震荡整理（45%概率）</div>
+                    <div class="operation-action">围绕关键支撑与压力位进行高抛低吸，重点关注科技与军工板块的轮动机会。</div>
+                </div>
+                <div class="operation-item">
+                    <div class="operation-condition">⬇️ 向下突破（25%概率）</div>
+                    <div class="operation-action">降低仓位，规避风险。等待市场企稳信号，不轻易抄底。</div>
+                </div>
+                <div class="operation-item">
+                    <div class="operation-condition">⬆️ 反弹上攻（20%概率）</div>
+                    <div class="operation-action">可适当加仓，跟随市场热点，但需注意量能配合情况，若无量则冲高减仓。</div>
+                </div>
+                <div class="operation-item">
+                    <div class="operation-condition">⚠️ 风险控制</div>
+                    <div class="operation-action">严格设置止损位，跌破关键支撑位（如3350点）应减仓控制风险。警惕成交量持续萎缩带来的调整压力。</div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    
+    <script>
+        // 🔄 动态更新时间
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('update-time').textContent = 
+                `生成时间：${now.toLocaleString('zh-CN')}`;
+        }
+        
+        // 🎲 概率分析交互功能
+        document.querySelectorAll('.probability-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // 移除其他项的高亮
+                document.querySelectorAll('.probability-item').forEach(p => {
+                    p.style.border = '2px solid transparent';
+                });
+                // 添加当前项高亮
+                this.style.border = '2px solid #667eea';
+                this.style.background = 'rgba(102, 126, 234, 0.1)';
+            });
+        });
+        
+        // 🎯 概率条交互
+        document.querySelectorAll('.prob-segment').forEach(segment => {
+            segment.addEventListener('click', function() {
+                alert('点击了：' + this.textContent);
+            });
+        });
+        
+        // 🚀 初始化
+        updateTime();
+    </script>
+</body>
+</html>
