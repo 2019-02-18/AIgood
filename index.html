@@ -76,6 +76,7 @@
             font-size: 2.5rem;
             margin-bottom: 15px;
             background: linear-gradient(135deg, #667eea, #764ba2);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -331,6 +332,30 @@
             .reports-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .date-section {
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+            
+            .date-title {
+                font-size: 15px;
+                margin-bottom: 16px;
+                padding-bottom: 10px;
+            }
+            
+            .report-card {
+                padding: 14px;
+            }
+            
+            .type-name {
+                font-size: 13px;
+            }
+            
+            .btn-open {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
         }
         
         /* ✨ 动画效果 */
@@ -382,6 +407,135 @@
         /* 风险提示 */
         .risk-footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #efefef; font-size: 12px; color: #666; }
         
+        /* 日期分组样式 */
+        .date-section { 
+            margin-bottom: 36px; 
+            background: #fafbfc; 
+            border-radius: 12px; 
+            padding: 24px; 
+            border: 1px solid #e8eaed;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .date-section:last-child { margin-bottom: 0; }
+        
+        .date-title { 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: #333; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e8eaed;
+            position: relative;
+        }
+        
+        .date-title i { 
+            color: #667eea; 
+            font-size: 16px; 
+        }
+        
+        .date-title.today {
+            color: #2c5aa0;
+            border-bottom-color: #667eea;
+        }
+        
+        .today-badge {
+            background: #4a5568;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 0;
+        }
+        
+        .report-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e8eaed;
+            padding: 18px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: #c3cdd9;
+        }
+        
+        .report-card.prediction {
+            border-left: 4px solid #5a67d8;
+        }
+        
+        .report-card.tracking {
+            border-left: 4px solid #4299e1;
+        }
+        
+        .report-card.guide {
+            border-left: 4px solid #48bb78;
+        }
+        
+        .report-card.other {
+            border-left: 4px solid #a0aec0;
+        }
+        
+        .report-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .type-icon {
+            font-size: 16px;
+        }
+        
+        .type-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .report-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .btn-open {
+            background: #4a5568;
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: background-color 0.2s ease;
+            border: 1px solid #4a5568;
+        }
+        
+        .btn-open:hover {
+            background: #2d3748;
+            border-color: #2d3748;
+        }
+        
+        .btn-open i {
+            font-size: 11px;
+        }
+        
         /* 🌙 暗色模式支持 */
         @media (prefers-color-scheme: dark) {
             .report-card {
@@ -420,7 +574,7 @@
                     <i class="fas fa-chart-pie"></i>
                 </div>
                 <div class="stat-number" id="total-reports">2</div>
-                <div class="stat-label">预测报告总数</div>
+                <div class="stat-label">分析报告总数</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">
@@ -445,25 +599,24 @@
             </div>
         </div>
         
-        <!-- 📋 预测报告列表 -->
+        <!-- 📋 报告列表 -->
         <div class="reports-section">
             <h2 class="section-title">
                 <i class="fas fa-file-chart"></i>
-                预测报告列表
+                市场分析报告
             </h2>
-            <div class="reports-grid" id="reports-container">
-                <!-- 报告卡片将通过JavaScript动态生成 -->
+            <div id="reports-container">
+                <!-- 报告将按类型分组动态生成 -->
             </div>
-            <ul class="simple-list" id="simple-list"></ul>
-            <div class="risk-footer">风险提示：本预测为量化与规则融合的参考，不构成投资建议。请结合自身风险承受能力决策。</div>
+            <div class="risk-footer">风险提示：本分析报告为量化与规则融合的参考，不构成投资建议。请结合自身风险承受能力决策。</div>
         </div>
 
-        <!-- 🖼️ 预测预览（自动轮播） -->
+        <!-- 🖼️ 报告预览（自动轮播） -->
         <div class="preview-section">
             <div class="toolbar">
                 <h2 class="section-title" style="margin:0;">
                     <i class="fas fa-eye"></i>
-                    实时预览（自动轮播）
+                    报告预览（自动轮播）
                 </h2>
                 <div>
                     <button class="btn btn-ghost" id="prev-btn"><i class="fas fa-arrow-left"></i> 上一份</button>
@@ -471,7 +624,7 @@
                 </div>
             </div>
             <iframe id="report-viewer" class="viewer-frame" src=""></iframe>
-            <div class="tips" style="margin-top:8px;color:#6c757d;font-size:12px;">提示：将自动从本目录中发现并轮播近30天的预测报告，亦可点击上方卡片切换。</div>
+            <div class="tips" style="margin-top:8px;color:#6c757d;font-size:12px;">提示：将自动从本目录中发现并轮播近期的市场分析报告，亦可点击上方卡片切换。</div>
         </div>
         
         <!-- 🔧 系统功能 -->
@@ -519,27 +672,85 @@
             return name.replace(/\.html?$/i, '');
         }
 
-        function prettyTitleFromFilename(filename) {
-            // 例：牛熊风向标明日预测_2025-09-15.html -> 牛熊风向标明日预测（2025-09-15）
+        function prettyTitleFromFilename(filename, type) {
+            // 例：牛熊风向标明日预测_2025-09-15.html -> 2025-09-15（周一）
             const base = filename.split('/').pop();
             const noExt = stripSuffix(base);
             const m = noExt.match(/^(.*)_(\d{4}-\d{2}-\d{2})$/);
-            if (m) return `${m[1]}（${m[2]}）`;
+            if (m) {
+                const date = new Date(m[2]);
+                const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                const weekday = weekdays[date.getDay()];
+                return `${m[2]}（${weekday}）`;
+            }
             return noExt;
         }
 
         function generateReportsList(reports) {
-            const ul = document.getElementById('simple-list');
-            ul.innerHTML = reports.map(r => {
-                const title = prettyTitleFromFilename(r.filename);
+            // 按日期分组
+            const reportsByDate = {};
+            reports.forEach(report => {
+                if (!reportsByDate[report.date]) {
+                    reportsByDate[report.date] = [];
+                }
+                reportsByDate[report.date].push(report);
+            });
+            
+            // 按日期降序排列
+            const sortedDates = Object.keys(reportsByDate).sort((a, b) => b.localeCompare(a));
+            
+            const container = document.getElementById('reports-container');
+            container.innerHTML = sortedDates.map(date => {
+                const reportsForDate = reportsByDate[date];
+                const dateObj = new Date(date);
+                const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                const weekday = weekdays[dateObj.getDay()];
+                const isToday = date === new Date().toISOString().split('T')[0];
+                
                 return `
-                <li>
-                    <span class="item-title">${title}</span>
-                    <span class="item-right">
-                        <a class="item-open" href="${r.filename}" target="_blank">打开</a>
-                        <span class="item-arrow">›</span>
-                    </span>
-                </li>`;
+                <div class="date-section">
+                    <h3 class="date-title ${isToday ? 'today' : ''}">
+                        <i class="fas fa-calendar-day"></i>
+                        ${date}（${weekday}）
+                        ${isToday ? '<span class="today-badge">今日</span>' : ''}
+                    </h3>
+                    <div class="reports-grid">
+                        ${reportsForDate.map(report => {
+                            let typeIcon, typeName, typeClass;
+                            if (report.type === '预测') {
+                                typeIcon = '🔮';
+                                typeName = '牛熊风向标预测';
+                                typeClass = 'prediction';
+                            } else if (report.type === '追踪') {
+                                typeIcon = '📊';
+                                typeName = '市场脉搏实时追踪';
+                                typeClass = 'tracking';
+                            } else if (report.type === '指南') {
+                                typeIcon = '📋';
+                                typeName = '市场监听操作指南';
+                                typeClass = 'guide';
+                            } else {
+                                typeIcon = '📄';
+                                typeName = '其他文档';
+                                typeClass = 'other';
+                            }
+                            
+                            return `
+                            <div class="report-card ${typeClass}">
+                                <div class="report-type">
+                                    <span class="type-icon">${typeIcon}</span>
+                                    <span class="type-name">${typeName}</span>
+                                </div>
+                                <div class="report-actions">
+                                    <a class="btn-open" href="${report.filename}" target="_blank">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        查看报告
+                                    </a>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
             }).join('');
         }
         
@@ -633,25 +844,49 @@
 
         // 🧭 自动发现本目录内的预测报告（按命名规则尝试）
         async function discoverReports() {
-            // 仅按近30天命名规则探测，探测不到则返回空列表（不使用默认列表）
+            // 支持多种报告类型的自动发现
             const today = new Date();
             const ONE_DAY = 24 * 60 * 60 * 1000;
             const candidates = [];
-            // 向后回溯60天，向前预判7天（覆盖跨周/节假日生成的T+1文件）
-            for (let i = 0; i <= 60; i++) {
-                const d = new Date(today.getTime() - i * ONE_DAY);
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                candidates.push(`牛熊风向标明日预测_${y}-${m}-${day}.html`);
-            }
-            for (let i = 1; i <= 7; i++) {
-                const d = new Date(today.getTime() + i * ONE_DAY);
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                candidates.push(`牛熊风向标明日预测_${y}-${m}-${day}.html`);
-            }
+            
+            // 报告类型配置
+            const reportTypes = [
+                {
+                    prefix: '牛熊风向标明日预测',
+                    days: 60, // 向后回溯60天
+                    forward: 7 // 向前预判7天
+                },
+                {
+                    prefix: '市场脉搏实时追踪',
+                    days: 30, // 向后回溯30天
+                    forward: 0 // 不向前预判
+                },
+                {
+                    prefix: '市场监听操作指南',
+                    days: 30, // 向后回溯30天
+                    forward: 0 // 不向前预判
+                }
+            ];
+            
+            // 为每种报告类型生成候选文件名
+            reportTypes.forEach(type => {
+                // 向后回溯
+                for (let i = 0; i <= type.days; i++) {
+                    const d = new Date(today.getTime() - i * ONE_DAY);
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    candidates.push(`${type.prefix}_${y}-${m}-${day}.html`);
+                }
+                // 向前预判
+                for (let i = 1; i <= type.forward; i++) {
+                    const d = new Date(today.getTime() + i * ONE_DAY);
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    candidates.push(`${type.prefix}_${y}-${m}-${day}.html`);
+                }
+            });
 
             async function exists(path) {
                 try {
@@ -667,7 +902,20 @@
 
             const toObj = (fname) => {
                 const m = fname.match(/(\d{4}-\d{2}-\d{2})/);
-                return { filename: fname, date: m ? m[1] : fname, preview: '' };
+                let type = '其他';
+                if (fname.includes('牛熊风向标')) {
+                    type = '预测';
+                } else if (fname.includes('市场脉搏')) {
+                    type = '追踪';
+                } else if (fname.includes('监听操作')) {
+                    type = '指南';
+                }
+                return { 
+                    filename: fname, 
+                    date: m ? m[1] : fname, 
+                    type: type,
+                    preview: '' 
+                };
             };
             return files.map(toObj).sort((a, b) => b.date.localeCompare(a.date));
         }
